@@ -45,10 +45,10 @@ class KNearestNeighbour:
         return distance_list
 
     def _check_dups_(self, list, k):
-        if list[-k-1][0] == list[-k][0]:
+        if list[k+1][0] == list[k][0]:
             k += 1
             return self._check_dups_(list, k)
-        return list[-k:]
+        return list[:k]
 
     # Returns a list of the closest classes
     def _find_closest_kclasses_(self, newx, k):

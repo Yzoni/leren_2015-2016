@@ -32,10 +32,10 @@ class KNearestNeighbour:
         return distance_list
 
     def _check_dups_(self, list, k):
-        if list[-k-1][0] == list[-k][0]:
+        if list[k+1][0] == list[k][0]:
             k += 1
             return self._check_dups_(list, k)
-        return list[-k:]
+        return list[:k]
 
     # Returns a list of the closest classes
     def _find_closest_kclasses_(self, newx, k):
@@ -46,6 +46,7 @@ class KNearestNeighbour:
         sorted_combined_list = sorted(combined_list, key=operator.itemgetter(0))
         # If there are more nodes with the same distance add them aswell
         closest_k = self._check_dups_(sorted_combined_list, k)
+        print(closest_k)
         return [i[1] for i in closest_k]
 
     # Get most frequent element in k-range list
