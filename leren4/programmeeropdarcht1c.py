@@ -28,6 +28,8 @@ class KNearestNeighbour:
     def predictive_values(self):
         predictive_values = []
         x_array = np.asarray(self.x)
+        print(self.x)
+        print(x_array)
         y_array = np.asarray(self.y)
         for column in x_array.T:
             print(column, y_array)
@@ -93,16 +95,14 @@ def createdatalists(csvlist, xcolumns, ycolumn):
 
     for entry in csvlist:
         x.append(list(int(entry[i]) for i in xcolumns))
-        y.append(int(entry[ycolumn]))
-    for x0 in x:
-        x0.insert(0, 1)
+        y.append(int(entry[ycolumn])
     return x, y
 
 if __name__ == "__main__":
     csv_as_list_train = readFile('digist123-1.csv')
-    x1, y1 = createdatalists(csv_as_list_train, list(range(0,63)), 64)
+    x1, y1 = createdatalists(csv_as_list_train, list(range(0,64)), 64)
     csv_as_list_test = readFile('digist123-2.csv')
-    x2, y2 = createdatalists(csv_as_list_test, list(range(0,63)), 64)
+    x2, y2 = createdatalists(csv_as_list_test, list(range(0,64)), 64)
 
     a = KNearestNeighbour(x1, y1)
     print(str(a.accuracy(x2, y2, 2)) + "%")
