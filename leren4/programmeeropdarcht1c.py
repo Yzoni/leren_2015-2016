@@ -17,32 +17,31 @@ class KNearestNeighbour:
         self.x = x
         self.y = y
 
-    # Returns the euclidean distance between two points
-    def euclidean_distance(self, pn, qn):
-        pq_square = 0
-        for p,q in zip(pn, qn):
-            pq_square += np.square(p - q)
-        distance = np.sqrt(pq_square)
-        return distance
-
     def predictive_values(self):
         predictive_values = []
         x_array = np.asarray(self.x)
-        print(self.x)
-        print(x_array)
         y_array = np.asarray(self.y)
         for column in x_array.T:
-            print(column, y_array)
-            print("sepeartor")
             c, _ = pearsonr(column, y_array)
-            predictive_values.append(c)
+            if np.isnan(c): # When the value is to small NaN is returned
+                predictive_values.append(0)
+            else:
+                predictive_values.append(c**2)
         return predictive_values
 
+    # Returns the euclidean distance between two points
+    def euclidean_distance(self, pn, qn, predictive_values):
+        pq_square = 0
+        for p, q, pv in zip(pn, qn, predictive_values):
+            pq_square += np.square(p - q) * pv
+        distance = np.sqrt(pq_square)
+        return distance
 
     def _find_all_distances_(self, newx):
         distance_list = []
+        predictive_values = self.predictive_values()
         for xrow in self.x:
-            distance = self.euclidean_distance(xrow, newx)
+            distance = self.euclidean_distance(xrow, newx, predictive_values)
             distance_list.append(distance)
         return distance_list
 
@@ -95,7 +94,7 @@ def createdatalists(csvlist, xcolumns, ycolumn):
 
     for entry in csvlist:
         x.append(list(int(entry[i]) for i in xcolumns))
-        y.append(int(entry[ycolumn])
+        y.append(int(entry[ycolumn]))
     return x, y
 
 if __name__ == "__main__":
