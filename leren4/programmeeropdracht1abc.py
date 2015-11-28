@@ -75,7 +75,7 @@ class WeightedPredictiveValueKNN(KNN):
                 predictive_values.append(c**2)
         return predictive_values
 
-    # Returns the euclidean distance between two points
+    # Returns the euclidean distance between two points multiplied the weight of the feature
     def euclidean_distance(self, pn, qn, predictive_values):
         pq_square = 0
         for p, q, pv in zip(pn, qn, predictive_values):
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     print("Accuracy normal KNN: " + str(a.accuracy(x2, y2, 2)) + "%")
 
     b = WeightedDistanceKNN(x1, y1)
-    print("Accuracy weighted distnace KNN: " + str(b.accuracy(x2, y2, 2)) + "%")
+    print("Accuracy weighted distance KNN: " + str(b.accuracy(x2, y2, 2)) + "%")
 
     c = WeightedPredictiveValueKNN(x1, y1)
     print("Accuracy weigted predictive value KNN: " + str(c.accuracy(x2, y2, 2)) + "%")
