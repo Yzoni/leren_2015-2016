@@ -20,7 +20,7 @@ class KNearestNeighbour:
     def euclidean_distance(self, pn, qn):
         pq_square = 0
         for p,q in zip(pn, qn):
-            pq_square =+ np.square(p - q)
+            pq_square += np.square(p - q)
         distance = np.sqrt(pq_square)
         return distance
 

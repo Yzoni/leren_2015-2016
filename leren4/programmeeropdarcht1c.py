@@ -1,5 +1,6 @@
 import numpy as np
 import operator
+from scipy.stats.stats import pearsonr
 
 import csv
 
@@ -20,9 +21,21 @@ class KNearestNeighbour:
     def euclidean_distance(self, pn, qn):
         pq_square = 0
         for p,q in zip(pn, qn):
-            pq_square =+ np.square(p - q)
+            pq_square += np.square(p - q)
         distance = np.sqrt(pq_square)
         return distance
+
+    def predictive_values(self):
+        predictive_values = []
+        x_array = np.asarray(self.x)
+        y_array = np.asarray(self.y)
+        for column in x_array.T:
+            print(column, y_array)
+            print("sepeartor")
+            c, _ = pearsonr(column, y_array)
+            predictive_values.append(c)
+        return predictive_values
+
 
     def _find_all_distances_(self, newx):
         distance_list = []
@@ -93,4 +106,5 @@ if __name__ == "__main__":
 
     a = KNearestNeighbour(x1, y1)
     print(str(a.accuracy(x2, y2, 2)) + "%")
+    print(a.predictive_values())
 
