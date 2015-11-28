@@ -46,12 +46,34 @@ class KNearestNeighbour:
         sorted_combined_list = sorted(combined_list, key=operator.itemgetter(0))
         # If there are more nodes with the same distance add them aswell
         closest_k = self._check_dups_(sorted_combined_list, k)
-        return [i[1] for i in closest_k]
+        return closest_k
+
+    def _weight_closest_kclasses(self, newx, k):
+        closest_list = self._find_closest_kclasses_(newx, k)
+        weigted_closes_list = []
+        for e in closest_list:
+            calc_weight = 1 / e[0]
+            e.append(calc_weight)
+            weigted_closes_list.append(e)
+        return weigted_closes_list
 
     # Get most frequent element in k-range list
     def get_class(self, xtest, k):
-        closest_list = self._find_closest_kclasses_(xtest, k)
-        return max(set(closest_list), key=closest_list.count)
+        weighted_closest_list = self._weight_closest_kclasses(xtest, k)
+        weight_by_class = []
+        for e in weighted_closest_list:
+            y_class = e[1]
+            weight_item = e[2]
+            if not weight_by_class:
+                weight_by_class.append([y_class, weight_item])
+            for x in weight_by_class:
+                if y_class == x[0]:
+                    x[1] += weight_item
+                else:
+                    weight_by_class.append([y_class, weight_item])
+        max_list = max(weight_by_class, key=operator.itemgetter(1))
+        print(max_list)
+        return max_list[0]
 
     def accuracy(self, xtest, ytest, k):
         totalrows = len(ytest)
