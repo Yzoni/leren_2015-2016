@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import csv
+
 from programmeeropdracht1abc import KNN
 from programmeeropdracht1abc import WeightedDistanceKNN
 from programmeeropdracht1abc import WeightedPredictiveValueKNN
+
+from logisticregressionweek3 import LogisticRegression
 
 def plot(x, y, xlabel="x", ylabel="y"):
     plt.plot(x, y)
@@ -29,7 +32,7 @@ def createdatalists(csvlist, xcolumns, ycolumn):
         y.append(int(entry[ycolumn]))
     return x, y
 
-def analyze_knn(x1, y1, x2, y2, iterations):
+def analyze_knn(x1, y1, x2, y2, k):
     normal_knn = KNN(x1, y1)
     weighted_distance_knn = WeightedDistanceKNN(x1, y1)
     weighted_predictive_knn = WeightedPredictiveValueKNN(x1, y1)
@@ -38,7 +41,7 @@ def analyze_knn(x1, y1, x2, y2, iterations):
     accuracy_distance_knn_list = []
     accuracy_predictive_knn_list = []
 
-    range_list = list(range(1, iterations))
+    range_list = list(range(1, k))
     for i in range_list:
         accuracy = normal_knn.accuracy(x2, y2, i)
         accuracy_normal_knn_list.append(accuracy)
@@ -61,10 +64,55 @@ def analyze_knn(x1, y1, x2, y2, iterations):
 
     plt.show()
 
+def get_partialdataset(x_data, y_data, y_class):
+    index_list = []
+    for index, class_in_y in enumerate(y_data):
+        if class_in_y == y_class[0] or y_class[1]:
+            index_list.append(index)
+    newx = []
+    newy = []
+    for index in index_list:
+        newx.append(x_data[index])
+        newy.append(y_data[index])
+    return newx, newy
+
+def analyze_logisticregression(x1, y1, x2, y2):
+
+    # Classes 1 and 2
+    x1_12, y1_12 = get_partialdataset(x1, y1, [1, 2])
+    x2_12, y2_12 = get_partialdataset(x2, y2, [1, 2])
+    lg_1and2 = LogisticRegression(x1_12, y1_12)
+
+    # Classes 1 and 3
+    x1_13, y1_13 = get_partialdataset(x1, y1, [1, 3])
+    x2_13, y2_13 = get_partialdataset(x2, y2, [1, 3])
+    lg_1and3 = LogisticRegression(x1_13, y1_13)
+
+    # Classes 2 and 3
+    x1_23, y1_23 = get_partialdataset(x1, y1, [2, 3])
+    x2_23, y2_23 = get_partialdataset(x2, y2, [2, 3])
+    lg_2and3 = LogisticRegression(x1_23, y1_23)
+
+    # TODO do for different learning rates and amount of iterations
+    lg_1and2.train(100, 0.1)
+    print(lg_1and2.accuracy(x2_23, y2_23))
+
+
+
 if __name__ == "__main__":
     csv_as_list_train = readFile('digist123-1.csv')
     x1, y1 = createdatalists(csv_as_list_train, list(range(0,64)), 64)
     csv_as_list_test = readFile('digist123-2.csv')
     x2, y2 = createdatalists(csv_as_list_test, list(range(0,64)), 64)
 
-    analyze_knn(x1, y1, x2, y2, 11)
+    #analyze_knn(x1, y1, x2, y2, 11)
+    analyze_logisticregression(x1, y1, x2, y2)
+
+'''
+--------------
+- DISCUSSION -
+--------------
+
+Knn is better cuz its more good
+
+'''
