@@ -47,7 +47,6 @@ class LogisticRegression:
         reshaped_y = np.asarray(ytest)
         probability = self.hypothesis(reshaped_x, self.t)
         predicted = np.where(probability >= 0.5, 1, 0)
-        print(predicted, reshaped_y)
         return np.mean(reshaped_y == predicted)
 
     # Runs the hypothesis and returns the predicted values expressed as 1 or 0

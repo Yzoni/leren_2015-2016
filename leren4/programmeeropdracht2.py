@@ -32,6 +32,7 @@ def createdatalists(csvlist, xcolumns, ycolumn):
         y.append(int(entry[ycolumn]))
     return x, y
 
+# Analysation function for determining the best k value for the different knn algorithms.
 def analyze_knn(x1, y1, x2, y2, k):
     normal_knn = KNN(x1, y1)
     weighted_distance_knn = WeightedDistanceKNN(x1, y1)
@@ -76,7 +77,7 @@ def get_partialdataset(x_data, y_data, y_class):
         newy.append(y_data[index])
     return newx, newy
 
-def analyze_logisticregression(x1, y1, x2, y2):
+def analyze_logisticregression(x1, y1, x2, y2, iterations=10000, regularization=0):
 
     # Classes 1 and 2
     x1_12, y1_12 = get_partialdataset(x1, y1, [1, 2])
@@ -93,11 +94,25 @@ def analyze_logisticregression(x1, y1, x2, y2):
     x2_23, y2_23 = get_partialdataset(x2, y2, [2, 3])
     lg_2and3 = LogisticRegression(x1_23, y1_23)
 
-    # TODO do for different learning rates and amount of iterations
-    lg_1and2.train(100, 0.1)
-    print(lg_1and2.accuracy(x2_23, y2_23))
+    # Test required amount of iterations
+    range_list_iterations = list(range(1, iterations))
+    accuracy_12 = []
+    for i in range_list_iterations:
+        lg_1and2.train(i, 0.00001, regularization)
+        accuracy = lg_1and2.accuracy(x2_12, y2_12)
+        accuracy_12.append(accuracy)
+    plt.plot(range_list_iterations, accuracy_12, color="#D50000")
+    plt.show()
 
-
+    # Test best regularization term
+    range_list_regularization = list(range(1, regularization))
+    accuracy_12 = []
+    for i in range_list_regularization:
+        lg_1and2.train(iterations, 0.00001, i)
+        accuracy = lg_1and2.accuracy(x2_12, y2_12)
+        accuracy_12.append(accuracy)
+    plt.plot(range_list_regularization, accuracy_12, color="#D50000")
+    plt.show()
 
 if __name__ == "__main__":
     csv_as_list_train = readFile('digist123-1.csv')
@@ -105,14 +120,29 @@ if __name__ == "__main__":
     csv_as_list_test = readFile('digist123-2.csv')
     x2, y2 = createdatalists(csv_as_list_test, list(range(0,64)), 64)
 
-    #analyze_knn(x1, y1, x2, y2, 11)
-    analyze_logisticregression(x1, y1, x2, y2)
+    analyze_knn(x1, y1, x2, y2, 11)
+    analyze_logisticregression(x1, y1, x2, y2, iterations=1000, regularization=0)
+    analyze_logisticregression(x1, y1, x2, y2, iterations=1000, regularization=5)
+
 
 '''
 --------------
 - DISCUSSION -
 --------------
 
-Knn is better cuz its more good
+K-nearest neighbour is superior for this type of task compared to logistic regression, because with logistic regression
+only two classes can be compared an once. Neural networks might also be a good solution to use on digit recognition.
+Unfortunately I didn't make a generalized working version of this type of algorithm in the previous assignment. So I
+was not able to test this type of algorithm.
+
+Provided are a analysation function which plots the different knn algorithms with a range of k values. The result of
+this test is that the distance weighted KNN performs the best overall and the predictive weighted KNN the worst. Tje
+distance weighted performs best with k value of 1 or 2, but for general purpose a k value of 2 is probably best.
+
+The regularized logistic regression can also be tested. The main things which would be interesting to know is the
+amount of iterations necessary and the the optimal regularization term. This could be done with the provided functions.
+
+Concluding van be said that both KNN and neural networks can be used for digit recognition. This analysation evidenced
+that the best recognition result can be achieved with distance weighted KNN with a k value of 2.
 
 '''
