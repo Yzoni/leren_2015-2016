@@ -121,8 +121,8 @@ if __name__ == "__main__":
     x2, y2 = createdatalists(csv_as_list_test, list(range(0,64)), 64)
 
     analyze_knn(x1, y1, x2, y2, 11)
-    analyze_logisticregression(x1, y1, x2, y2, iterations=1000, regularization=0)
-    analyze_logisticregression(x1, y1, x2, y2, iterations=1000, regularization=5)
+    analyze_logisticregression(x1, y1, x2, y2, iterations=1000)
+    analyze_logisticregression(x1, y1, x2, y2, regularization=5)
 
 
 '''
