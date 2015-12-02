@@ -69,7 +69,8 @@ class WeightedPredictiveValueKNN(KNN):
         y_array = np.asarray(self.y)
         for column in x_array.T:
             c, _ = pearsonr(column, y_array)
-            if np.isnan(c): # When the value is to small NaN is returned
+            if np.isnan(c): # When the value is to small NaN is returned (RuntimeWarning: invalid value encountered
+                            # in double_scalarsr = r_num / r_den)
                 predictive_values.append(0)
             else:
                 predictive_values.append(c**2)
