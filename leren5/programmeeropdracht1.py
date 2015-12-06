@@ -5,6 +5,9 @@ import numpy as np
 # gnn = GausianNaiveBayes([[1 2 1] [5 2 0] [0 4 1]], [0, 1])
 # gnn.posteriors([1 2])
 # gnn.accuracy
+##
+# NOTE: possible classes list needs to be a serie of consecutive numbers
+##
 class GausianNaiveBayes():
     def __init__(self, training_data, class_values):
         self.training_data = training_data
@@ -46,13 +49,7 @@ class GausianNaiveBayes():
 
         # Loop over the class vectors separately
         for class_data in split_by_class:
-            class_means, class_variances = self._mean_and_var(class_data) # Get the mean and variance of an class vector
-
-            # Generates a list of columns where the variance is zero
-            # variance_zero_list = []
-            # for i, variance in enumerate(class_variances):
-            #    if variance == 0:
-            #        variance_zero_list.append(i)
+            class_means, class_variances = self._mean_and_var(class_data) # Get mean and variance of an class vector
 
             pdf_values_class = 1
             for mean, variance, test_value in zip(class_means, class_variances, test_data_row):
@@ -92,8 +89,30 @@ class GausianNaiveBayes():
             max_class = posteriors.index(max(posteriors))
             if test_data[i][-1] == (max_class + 1):
                 counter += 1
-            print(test_data[i][-1], (max_class + 1))
         return (counter / totalrows) * 100
+
+    def max_prob_misclassified(self, test_data):
+        l = []
+
+        for i, test_data_row in enumerate(test_data):
+            posteriors = self.posteriors(test_data_row)
+            max_class = posteriors.index(max(posteriors))
+            if test_data[i][-1] != (max_class + 1):
+                l.append([i, test_data[i][-1], max_class + 1])
+
+        r = []
+        p = []
+        for e in self.class_values:
+            count1 = 0
+            count2 = 0
+            for li in l:
+                if e == li[1]:
+                    count1 += 1
+                if e == li[2]:
+                    count2 += 1
+            r.append(count1)
+            p.append(count2)
+        return r, p
 
 # Reads a csv-file into a vector given a file name.
 def read_file(csvfilename):
@@ -105,5 +124,20 @@ if __name__ == "__main__":
     test_array = read_file("digist123-2.csv")
 
     gnb = GausianNaiveBayes(train_array, [1, 2, 3])
-    print(gnb.accuracy(test_array))
+    print("Percentage correct: " + str(gnb.accuracy(test_array)) + "%")
 
+    most_often_wrong, most_often_wronged_by = gnb.max_prob_misclassified(test_array)
+    print("Count of wrong guessed classes by test class: " + str(most_often_wrong))
+    print("Count of guessed classes but were wrong: by class: " + str(most_often_wronged_by))
+
+    '''
+    DISCUSSION 1b
+
+    It can be seen that the most wrongly guessed digit is digit 2, which is guessed wrong
+    68 times. The digit most often guessed wrong is digit 3, this digit was wrongly substituted
+    76 in classes 1 or 2. There seems to be a systematic problem.
+
+    A possible solution to this problem without changing the dataset is to add a bias so
+    more 2s classified as 3s classify to 2s.
+
+    '''
