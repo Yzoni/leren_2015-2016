@@ -77,11 +77,11 @@ class GausianNaiveBayes():
         # Sum the evidence
         evidence = sum(teller_values)
 
-        # Store all posteriors by class an element in list
+        # Store all posteriors by class as element in list
         posteriors = []
         for value in teller_values:
             posteriors.append( value / evidence )
-
+        print(posteriors)
         return posteriors
 
     # Computes the accuracy percentage by dividing the amount of correctly guessed classes by the total amount
@@ -97,6 +97,12 @@ class GausianNaiveBayes():
             print(test_data[i][-1], (max_class + 1))
         return (counter / totalrows) * 100
 
+def remove_zero_features(training_data, test_data):
+    #indexes = np.where(~training_data.any(axis=0))[0]
+    new_training_data = np.delete(training_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
+    new_test_data = np.delete(test_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
+    return new_training_data, new_test_data
+
 # Reads a csv-file into a vector given a file name.
 def read_file(csvfilename):
     array = np.loadtxt(csvfilename, delimiter=';', skiprows=0, dtype=np.float64)
@@ -106,13 +112,7 @@ if __name__ == "__main__":
     train_array = read_file("digist123-1.csv")
     test_array = read_file("digist123-2.csv")
 
-    def _remove_zero_features(training_data, test_data):
-        #indexes = np.where(~training_data.any(axis=0))[0]
-        new_training_data = np.delete(training_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
-        new_test_data = np.delete(test_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
-        return new_training_data, new_test_data
-
-    new_train_array,  new_test_data = _remove_zero_features(train_array, test_array)
+    new_train_array,  new_test_data = remove_zero_features(train_array, test_array)
     gnb = GausianNaiveBayes(new_train_array, [1, 2, 3])
     print(gnb.accuracy(new_test_data))
 
