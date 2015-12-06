@@ -11,11 +11,6 @@ class GausianNaiveBayes():
         self.class_values = class_values
         self.training_data_size, _ = training_data.shape
 
-    def _remove_zero_features(self, training_data):
-        indexes = np.where(~training_data.any(axis=0))[0]
-        new_training_data = np.delete(training_data, indexes, 1)
-        return new_training_data
-
     # Splits data in sublists by class
     def _splitdata(self):
         splitted_data_list = []
@@ -40,11 +35,11 @@ class GausianNaiveBayes():
 
     # Computes the probability density function given sigma, mu and an test example value
     def pdf(self, mean, variance, test_value):
-        exps = (( -(test_value - mean) ** 2) / (2 * variance **2))
+        exps = np.exp(( -(test_value - mean) ** 2) / (2 * variance **2))
         return ( exps / np.sqrt(2 * np.pi * variance ** 2) )
 
     def posteriors(self, test_data_row):
-        test_data_row = np.delete(test_data_row, -1) # remove class column (TODO: should be before this function)
+        test_data_row = np.delete(test_data_row, -1) # remove class column (TODO: should be done before this function)
         split_by_class = self._splitdata() # Get a list of class vectors.
         pdf_values_all_classes = []
         prior_values_all_classes = []
@@ -60,9 +55,13 @@ class GausianNaiveBayes():
             #        variance_zero_list.append(i)
 
             pdf_values_class = 1
-            # Loop over all features of a test example
             for mean, variance, test_value in zip(class_means, class_variances, test_data_row):
-                pdf_value = self.pdf(mean, variance, test_value)
+                # Avoid division by zero, if variance is 1 make pdf_value 1
+                if variance == 0:
+                    pdf_value = 1
+                else:
+                    pdf_value = self.pdf(mean, variance, test_value)
+
                 pdf_values_class *= pdf_value
 
             # Stores the pdf and prior values as an element in a list
@@ -72,7 +71,7 @@ class GausianNaiveBayes():
         # Store the values above the dividing sign as element by class
         teller_values = []
         for pdf_value_class, prior_value in zip(pdf_values_all_classes, prior_values_all_classes):
-            teller_values.append( pdf_value_class * prior_value )
+            teller_values.append(pdf_value_class * prior_value)
 
         # Sum the evidence
         evidence = sum(teller_values)
@@ -80,8 +79,7 @@ class GausianNaiveBayes():
         # Store all posteriors by class as element in list
         posteriors = []
         for value in teller_values:
-            posteriors.append( value / evidence )
-        print(posteriors)
+            posteriors.append(value / evidence)
         return posteriors
 
     # Computes the accuracy percentage by dividing the amount of correctly guessed classes by the total amount
@@ -97,12 +95,6 @@ class GausianNaiveBayes():
             print(test_data[i][-1], (max_class + 1))
         return (counter / totalrows) * 100
 
-def remove_zero_features(training_data, test_data):
-    #indexes = np.where(~training_data.any(axis=0))[0]
-    new_training_data = np.delete(training_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
-    new_test_data = np.delete(test_data, [0, 7, 8, 15, 16, 23, 24, 31, 32, 33, 39, 40, 47, 48, 56, 63], axis=1)
-    return new_training_data, new_test_data
-
 # Reads a csv-file into a vector given a file name.
 def read_file(csvfilename):
     array = np.loadtxt(csvfilename, delimiter=';', skiprows=0, dtype=np.float64)
@@ -112,24 +104,6 @@ if __name__ == "__main__":
     train_array = read_file("digist123-1.csv")
     test_array = read_file("digist123-2.csv")
 
-    new_train_array,  new_test_data = remove_zero_features(train_array, test_array)
-    gnb = GausianNaiveBayes(new_train_array, [1, 2, 3])
-    print(gnb.accuracy(new_test_data))
+    gnb = GausianNaiveBayes(train_array, [1, 2, 3])
+    print(gnb.accuracy(test_array))
 
-
-    ##############
-    # SKLEARN
-    ##############
-    def read_file(csvfilename, xcolumns, ycolumn):
-        array = np.loadtxt(csvfilename, delimiter=';', skiprows=1, dtype=int)
-        x = np.insert(array[:,xcolumns], 0, 1, axis=1)
-        y = array[:,ycolumn]
-        return x, y
-
-    from sklearn.naive_bayes import GaussianNB
-    x, y = read_file("digist123-1.csv", list(range(0, 64)), 64)
-    x1, y2 = read_file("digist123-2.csv", list(range(0, 64)), 64)
-    gnb = GaussianNB()
-    y_pred = gnb.fit(x, y).predict(x1)
-    print("Number of mislabeled points out of a total %d points : %d"
-          % (x.shape[0],(y2 != y_pred).sum()))
