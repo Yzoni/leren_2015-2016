@@ -11,6 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from scipy.stats import ttest_rel
 import numpy as np
 
+__author__ = "Yorick de Boer (10786015"
+
 def read_file(csvfilename, xcolumns, ycolumn):
     array = np.loadtxt(csvfilename, delimiter=';', skiprows=1, dtype=int)
     x = np.insert(array[:,xcolumns], 0, 1, axis=1)

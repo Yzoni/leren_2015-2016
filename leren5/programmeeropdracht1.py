@@ -1,5 +1,8 @@
 import numpy as np
 
+__author__ = "Yorick de Boer (10786015"
+
+'''
 # Initialize with training data and the possible class values
 # EXAMPLE:
 # gnn = GausianNaiveBayes([[1 2 1] [5 2 0] [0 4 1]], [0, 1])
@@ -8,6 +11,7 @@ import numpy as np
 ##
 # NOTE: possible classes list needs to be a serie of consecutive numbers
 ##
+'''
 class GausianNaiveBayes():
     def __init__(self, training_data, class_values):
         self.training_data = training_data
