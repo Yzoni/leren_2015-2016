@@ -42,8 +42,8 @@ class GausianNaiveBayes():
 
     # Computes the probability density function given sigma, mu and an test example value
     def pdf(self, mean, variance, test_value):
-        exps = np.exp(( -(test_value - mean) ** 2) / (2 * variance **2))
-        return ( exps / np.sqrt(2 * np.pi * variance ** 2) )
+        exps = np.exp(( -(test_value - mean) ** 2) / (2 * variance))
+        return ( exps / np.sqrt(2 * np.pi * variance) )
 
     def posteriors(self, test_data_row):
         test_data_row = np.delete(test_data_row, -1) # remove class column (TODO: should be done before this function)
