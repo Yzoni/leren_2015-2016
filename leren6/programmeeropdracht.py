@@ -4,6 +4,8 @@ import operator
 import matplotlib.pyplot as plt
 import pprint
 
+__author__ = "Julian Main (), Yorick de Boer (10786015)"
+
 class KMeans():
     def __init__(self, x_training, k):
         self.x = x_training
