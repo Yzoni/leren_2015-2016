@@ -120,20 +120,28 @@ def true_mean_dataset(xdata, ydata):
 
 digits1_x, digits1_y = read_file("digist123-1.csv", list(range(0, 64)), 64)
 
+print("NOTE: if this error occurs: 'ValueError: need at least one array to concatenate', please just run the script"
+      "again untill it works.")
+
 # QUESTION 1: k-means clusterin implementation
+print("\nQUESTION 1")
 kmeans = KMeans(digits1_x, 3)
 kmeans.learn(5)
 pprint.pprint(kmeans.means())
 
 # QUESTION 2: k optimization
+print("\nQUESTION 2")
+print("NOTE: if this error occurs: 'ValueError: need at least one array to concatenate', please just run the script"
+      " again untill it works.")
+print("NOTE: close matplotwindow to continue...")
 kmeans_optimal = KMeans(digits1_x, 3)
-example_dict = kmeans_optimal.learn(15, plot_error=0)
+example_dict = kmeans_optimal.learn(15, plot_error=1)
 # It can be seen that the error is constant after 6 iterations, so k is optimal after 6 iterations
 
 
 # QUESTION 3: comparing found clusters with true clusters
 # Compares the found cluster class with the given example cluster class. This is done line by line.
-
+print("\nQuestion 3")
 count_class1 = []
 count_class2 = []
 count_class3 = []
@@ -154,7 +162,7 @@ for class_element in example_dict:
         list_rows_one_class.append(i[0])
     found_classes.append(list_rows_one_class)
 
-print(found_classes)
+print("Found classes by original line number: " + str(found_classes))
 
 # Manually setting class to found clusters:
 found_class1 = [0, 1, 3, 4, 5, 6, 7, 8, 9, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 50, 52, 53, 55, 56, 57, 58, 59, 60, 61, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 237, 276, 277, 278, 289, 291]
@@ -186,7 +194,8 @@ print("Accuracy of: " + str((count1 + count2 + count3) / len(digits1_y) * 100))
 # find_anomalies returns the examples of which the distance to the mean is
 # greater than the threshold distance. These examples are the anomalies
 
-#anomalies = kmeans_optimal.find_anomalies(example_dict, 40)
+print("\nQuestion 4")
+# anomalies = kmeans_optimal.find_anomalies(example_dict, 40)
 
 # QUESTION 5:
 # We have examined the anomalies by printing the 8 x 8 matrix of each training
@@ -194,6 +203,9 @@ print("Accuracy of: " + str((count1 + count2 + count3) / len(digits1_y) * 100))
 # all resembled the number 4. Since our algorithm uses only 3 clusters, and
 # the number 4 does not occur frequently in the data, this number was classified
 # as an anomaly. Using more clusters might result in having a better classification.
+
+print("\nQuestion 5")
+
 '''
 print("Number of anomalies: ", len(anomalies))
 
@@ -203,4 +215,4 @@ for a in anomalies:
     print("\n")
 '''
 
-# QUESTINO 6:
+# QUESTION 6:
