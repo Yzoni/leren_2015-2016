@@ -96,7 +96,8 @@ class KMeans():
     def find_anomalies(self, dict_example_by_centroid, threshold):
         anomalies = []
         for c in dict_example_by_centroid:
-            for array in dict_example_by_centroid[c]:
+            popped = self._remove_every_first_element_nested_list(dict_example_by_centroid[c])
+            for array in popped:
                 euc = self.euclidDist(array, self.centroids[c])
                 if euc > threshold:
                     anomalies.append(array)
@@ -197,7 +198,7 @@ print("Accuracy of: " + str((count1 + count2 + count3) / len(digits1_y) * 100))
 # greater than the threshold distance. These examples are the anomalies
 
 print("\nQuestion 4")
-# anomalies = kmeans_optimal.find_anomalies(example_dict, 40)
+anomalies = kmeans_optimal.find_anomalies(example_dict, 40)
 
 # QUESTION 5:
 # We have examined the anomalies by printing the 8 x 8 matrix of each training
@@ -207,14 +208,12 @@ print("\nQuestion 4")
 # as an anomaly. Using more clusters might result in having a better classification.
 
 print("\nQuestion 5")
-
-'''
 print("Number of anomalies: ", len(anomalies))
-
+print("Found anomalies:")
 # prints 8 x 8 grey-value array
 for a in anomalies:
-    print(a.reshape(8, 8))
+    print(a[0].reshape(8, 8))
     print("\n")
-'''
+
 
 # QUESTION 6:
